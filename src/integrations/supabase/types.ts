@@ -104,6 +104,7 @@ export type Database = {
       }
       interviews: {
         Row: {
+          avatar_persona: string
           completed_at: string | null
           difficulty_mode: string
           duration_minutes: number
@@ -118,6 +119,7 @@ export type Database = {
           user_id: string
         }
         Insert: {
+          avatar_persona?: string
           completed_at?: string | null
           difficulty_mode?: string
           duration_minutes?: number
@@ -132,6 +134,7 @@ export type Database = {
           user_id: string
         }
         Update: {
+          avatar_persona?: string
           completed_at?: string | null
           difficulty_mode?: string
           duration_minutes?: number
@@ -153,6 +156,7 @@ export type Database = {
           email: string | null
           id: string
           name: string
+          preferred_avatar_persona: string
           resume_text: string | null
         }
         Insert: {
@@ -160,6 +164,7 @@ export type Database = {
           email?: string | null
           id: string
           name?: string
+          preferred_avatar_persona?: string
           resume_text?: string | null
         }
         Update: {
@@ -167,6 +172,7 @@ export type Database = {
           email?: string | null
           id?: string
           name?: string
+          preferred_avatar_persona?: string
           resume_text?: string | null
         }
         Relationships: []
