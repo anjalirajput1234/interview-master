@@ -174,7 +174,6 @@ function AuthPage() {
                   setErrors((prev) => ({ ...prev, password: undefined }));
                 }}
                 placeholder="At least 8 characters"
-                minLength={8}
                 aria-invalid={Boolean(errors.password)}
                 aria-describedby={errors.password ? "password-error" : "password-hint"}
                 required
