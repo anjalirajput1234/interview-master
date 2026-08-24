@@ -43,5 +43,5 @@ export const PERSONAS: Persona[] = [
 ];
 
 export function getPersona(id?: string | null) {
-  return PERSONAS.find((p) => p.id === id) ?? PERSONAS[0];
+  return PERSONAS.find((p) => p.id === id) ?? PERSONAS[0]!;
 }
