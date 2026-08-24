@@ -148,10 +148,20 @@ function AuthPage() {
                 id="email"
                 type="email"
                 value={email}
-                onChange={(e) => setEmail(e.target.value)}
+                onChange={(e) => {
+                  setEmail(e.target.value);
+                  setErrors((prev) => ({ ...prev, email: undefined }));
+                }}
                 placeholder="you@example.com"
+                aria-invalid={Boolean(errors.email)}
+                aria-describedby={errors.email ? "email-error" : undefined}
                 required
               />
+              {errors.email && (
+                <p id="email-error" className="text-xs text-destructive">
+                  {errors.email}
+                </p>
+              )}
             </div>
             <div className="space-y-2">
               <Label htmlFor="password">Password</Label>
@@ -159,12 +169,27 @@ function AuthPage() {
                 id="password"
                 type="password"
                 value={password}
-                onChange={(e) => setPassword(e.target.value)}
-                placeholder="At least 6 characters"
-                minLength={6}
+                onChange={(e) => {
+                  setPassword(e.target.value);
+                  setErrors((prev) => ({ ...prev, password: undefined }));
+                }}
+                placeholder="At least 8 characters"
+                minLength={8}
+                aria-invalid={Boolean(errors.password)}
+                aria-describedby={errors.password ? "password-error" : "password-hint"}
                 required
               />
+              {errors.password ? (
+                <p id="password-error" className="text-xs text-destructive">
+                  {errors.password}
+                </p>
+              ) : (
+                <p id="password-hint" className="text-xs text-muted-foreground">
+                  At least 8 characters. Letters, numbers and special characters are all allowed.
+                </p>
+              )}
             </div>
+
             <Button type="submit" className="w-full" disabled={busy}>
               {busy ? "Please wait…" : isSignup ? "Create account" : "Log in"}
             </Button>
