@@ -15,6 +15,26 @@ const searchSchema = z.object({
   redirect: z.string().optional(),
 });
 
+/**
+ * Password rule: at least 8 characters. Letters, numbers and special
+ * characters are all allowed — no character-class requirements, so normal
+ * strong passwords are never rejected by the client.
+ */
+const passwordSchema = z
+  .string()
+  .min(8, { message: "Password must be at least 8 characters." })
+  .max(72, { message: "Password must be 72 characters or fewer." });
+
+const credentialsSchema = z.object({
+  email: z
+    .string()
+    .trim()
+    .email({ message: "Enter a valid email address." })
+    .max(255, { message: "Email must be less than 255 characters." }),
+  password: passwordSchema,
+});
+
+
 export const Route = createFileRoute("/auth")({
   validateSearch: searchSchema,
   head: () => ({
