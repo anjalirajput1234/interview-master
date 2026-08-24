@@ -60,6 +60,7 @@ function AuthPage() {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [busy, setBusy] = useState(false);
+  const [errors, setErrors] = useState<{ email?: string; password?: string }>({});
 
   useEffect(() => {
     if (!loading && user) void navigate({ to: redirect ?? "/dashboard" });
@@ -67,12 +68,21 @@ function AuthPage() {
 
   async function submit(e: React.FormEvent) {
     e.preventDefault();
+
+    const parsed = credentialsSchema.safeParse({ email, password });
+    if (!parsed.success) {
+      const fieldErrors = parsed.error.flatten().fieldErrors;
+      setErrors({ email: fieldErrors.email?.[0], password: fieldErrors.password?.[0] });
+      return;
+    }
+    setErrors({});
+
     setBusy(true);
     try {
       if (isSignup) {
         const { error } = await supabase.auth.signUp({
-          email,
-          password,
+          email: parsed.data.email,
+          password: parsed.data.password,
           options: {
             emailRedirectTo: `${window.location.origin}/dashboard`,
             data: { name },
@@ -81,16 +91,22 @@ function AuthPage() {
         if (error) throw error;
         toast.success("Account created. Welcome to InterviewAI!");
       } else {
-        const { error } = await supabase.auth.signInWithPassword({ email, password });
+        const { error } = await supabase.auth.signInWithPassword({
+          email: parsed.data.email,
+          password: parsed.data.password,
+        });
         if (error) throw error;
         toast.success("Welcome back!");
       }
     } catch (err) {
-      toast.error(err instanceof Error ? err.message : "Something went wrong");
+      const message = err instanceof Error ? err.message : "Something went wrong";
+      if (/password/i.test(message)) setErrors({ password: message });
+      toast.error(message);
     } finally {
       setBusy(false);
     }
   }
+
 
   return (
     <div className="flex min-h-screen flex-col">
