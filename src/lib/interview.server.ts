@@ -17,7 +17,9 @@ export type InterviewRow = InterviewConfig & {
   status: string;
   started_at: string;
   completed_at: string | null;
+  avatar_persona: string | null;
 };
+
 
 export async function loadBank(db: DB, interviewType: string): Promise<BankQuestion[]> {
   const { data } = await db

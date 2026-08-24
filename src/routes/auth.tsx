@@ -15,6 +15,26 @@ const searchSchema = z.object({
   redirect: z.string().optional(),
 });
 
+/**
+ * Password rule: at least 8 characters. Letters, numbers and special
+ * characters are all allowed — no character-class requirements, so normal
+ * strong passwords are never rejected by the client.
+ */
+const passwordSchema = z
+  .string()
+  .min(8, { message: "Password must be at least 8 characters." })
+  .max(72, { message: "Password must be 72 characters or fewer." });
+
+const credentialsSchema = z.object({
+  email: z
+    .string()
+    .trim()
+    .email({ message: "Enter a valid email address." })
+    .max(255, { message: "Email must be less than 255 characters." }),
+  password: passwordSchema,
+});
+
+
 export const Route = createFileRoute("/auth")({
   validateSearch: searchSchema,
   head: () => ({
@@ -40,6 +60,7 @@ function AuthPage() {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [busy, setBusy] = useState(false);
+  const [errors, setErrors] = useState<{ email?: string; password?: string }>({});
 
   useEffect(() => {
     if (!loading && user) void navigate({ to: redirect ?? "/dashboard" });
@@ -47,12 +68,21 @@ function AuthPage() {
 
   async function submit(e: React.FormEvent) {
     e.preventDefault();
+
+    const parsed = credentialsSchema.safeParse({ email, password });
+    if (!parsed.success) {
+      const fieldErrors = parsed.error.flatten().fieldErrors;
+      setErrors({ email: fieldErrors.email?.[0], password: fieldErrors.password?.[0] });
+      return;
+    }
+    setErrors({});
+
     setBusy(true);
     try {
       if (isSignup) {
         const { error } = await supabase.auth.signUp({
-          email,
-          password,
+          email: parsed.data.email,
+          password: parsed.data.password,
           options: {
             emailRedirectTo: `${window.location.origin}/dashboard`,
             data: { name },
@@ -61,16 +91,22 @@ function AuthPage() {
         if (error) throw error;
         toast.success("Account created. Welcome to InterviewAI!");
       } else {
-        const { error } = await supabase.auth.signInWithPassword({ email, password });
+        const { error } = await supabase.auth.signInWithPassword({
+          email: parsed.data.email,
+          password: parsed.data.password,
+        });
         if (error) throw error;
         toast.success("Welcome back!");
       }
     } catch (err) {
-      toast.error(err instanceof Error ? err.message : "Something went wrong");
+      const message = err instanceof Error ? err.message : "Something went wrong";
+      if (/password/i.test(message)) setErrors({ password: message });
+      toast.error(message);
     } finally {
       setBusy(false);
     }
   }
+
 
   return (
     <div className="flex min-h-screen flex-col">
@@ -112,10 +148,20 @@ function AuthPage() {
                 id="email"
                 type="email"
                 value={email}
-                onChange={(e) => setEmail(e.target.value)}
+                onChange={(e) => {
+                  setEmail(e.target.value);
+                  setErrors((prev) => ({ ...prev, email: undefined }));
+                }}
                 placeholder="you@example.com"
+                aria-invalid={Boolean(errors.email)}
+                aria-describedby={errors.email ? "email-error" : undefined}
                 required
               />
+              {errors.email && (
+                <p id="email-error" className="text-xs text-destructive">
+                  {errors.email}
+                </p>
+              )}
             </div>
             <div className="space-y-2">
               <Label htmlFor="password">Password</Label>
@@ -123,12 +169,26 @@ function AuthPage() {
                 id="password"
                 type="password"
                 value={password}
-                onChange={(e) => setPassword(e.target.value)}
-                placeholder="At least 6 characters"
-                minLength={6}
+                onChange={(e) => {
+                  setPassword(e.target.value);
+                  setErrors((prev) => ({ ...prev, password: undefined }));
+                }}
+                placeholder="At least 8 characters"
+                aria-invalid={Boolean(errors.password)}
+                aria-describedby={errors.password ? "password-error" : "password-hint"}
                 required
               />
+              {errors.password ? (
+                <p id="password-error" className="text-xs text-destructive">
+                  {errors.password}
+                </p>
+              ) : (
+                <p id="password-hint" className="text-xs text-muted-foreground">
+                  At least 8 characters. Letters, numbers and special characters are all allowed.
+                </p>
+              )}
             </div>
+
             <Button type="submit" className="w-full" disabled={busy}>
               {busy ? "Please wait…" : isSignup ? "Create account" : "Log in"}
             </Button>
