@@ -15,6 +15,7 @@ import { Route as AuthRouteImport } from './routes/auth'
 import { Route as DashboardRouteImport } from './routes/dashboard'
 import { Route as FeaturesRouteImport } from './routes/features'
 import { Route as HistoryRouteImport } from './routes/history'
+import { Route as HowItWorksRouteImport } from './routes/how-it-works'
 import { Route as PracticeRouteImport } from './routes/practice'
 import { Route as ProfileRouteImport } from './routes/profile'
 import { Route as InterviewNewRouteImport } from './routes/interview.new'
@@ -50,6 +51,11 @@ const FeaturesRoute = FeaturesRouteImport.update({
 const HistoryRoute = HistoryRouteImport.update({
   id: '/history',
   path: '/history',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const HowItWorksRoute = HowItWorksRouteImport.update({
+  id: '/how-it-works',
+  path: '/how-it-works',
   getParentRoute: () => rootRouteImport,
 } as any)
 const PracticeRoute = PracticeRouteImport.update({
@@ -90,6 +96,7 @@ export interface FileRoutesByFullPath {
   '/dashboard': typeof DashboardRoute
   '/features': typeof FeaturesRoute
   '/history': typeof HistoryRoute
+  '/how-it-works': typeof HowItWorksRoute
   '/practice': typeof PracticeRoute
   '/profile': typeof ProfileRoute
   '/interview/new': typeof InterviewNewRoute
@@ -104,6 +111,7 @@ export interface FileRoutesByTo {
   '/dashboard': typeof DashboardRoute
   '/features': typeof FeaturesRoute
   '/history': typeof HistoryRoute
+  '/how-it-works': typeof HowItWorksRoute
   '/practice': typeof PracticeRoute
   '/profile': typeof ProfileRoute
   '/interview/new': typeof InterviewNewRoute
@@ -119,6 +127,7 @@ export interface FileRoutesById {
   '/dashboard': typeof DashboardRoute
   '/features': typeof FeaturesRoute
   '/history': typeof HistoryRoute
+  '/how-it-works': typeof HowItWorksRoute
   '/practice': typeof PracticeRoute
   '/profile': typeof ProfileRoute
   '/interview/new': typeof InterviewNewRoute
@@ -135,6 +144,7 @@ export interface FileRouteTypes {
     | '/dashboard'
     | '/features'
     | '/history'
+    | '/how-it-works'
     | '/practice'
     | '/profile'
     | '/interview/new'
@@ -149,6 +159,7 @@ export interface FileRouteTypes {
     | '/dashboard'
     | '/features'
     | '/history'
+    | '/how-it-works'
     | '/practice'
     | '/profile'
     | '/interview/new'
@@ -163,6 +174,7 @@ export interface FileRouteTypes {
     | '/dashboard'
     | '/features'
     | '/history'
+    | '/how-it-works'
     | '/practice'
     | '/profile'
     | '/interview/new'
@@ -178,6 +190,7 @@ export interface RootRouteChildren {
   DashboardRoute: typeof DashboardRoute
   FeaturesRoute: typeof FeaturesRoute
   HistoryRoute: typeof HistoryRoute
+  HowItWorksRoute: typeof HowItWorksRoute
   PracticeRoute: typeof PracticeRoute
   ProfileRoute: typeof ProfileRoute
   InterviewNewRoute: typeof InterviewNewRoute
@@ -228,6 +241,13 @@ declare module '@tanstack/react-router' {
       path: '/history'
       fullPath: '/history'
       preLoaderRoute: typeof HistoryRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/how-it-works': {
+      id: '/how-it-works'
+      path: '/how-it-works'
+      fullPath: '/how-it-works'
+      preLoaderRoute: typeof HowItWorksRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/practice': {
@@ -282,6 +302,7 @@ const rootRouteChildren: RootRouteChildren = {
   DashboardRoute: DashboardRoute,
   FeaturesRoute: FeaturesRoute,
   HistoryRoute: HistoryRoute,
+  HowItWorksRoute: HowItWorksRoute,
   PracticeRoute: PracticeRoute,
   ProfileRoute: ProfileRoute,
   InterviewNewRoute: InterviewNewRoute,
