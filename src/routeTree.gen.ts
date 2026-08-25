@@ -13,6 +13,7 @@ import { Route as IndexRouteImport } from './routes/index'
 import { Route as AuthRouteImport } from './routes/auth'
 import { Route as DashboardRouteImport } from './routes/dashboard'
 import { Route as HistoryRouteImport } from './routes/history'
+import { Route as PracticeRouteImport } from './routes/practice'
 import { Route as InterviewNewRouteImport } from './routes/interview.new'
 import { Route as InterviewIdIndexRouteImport } from './routes/interview.$id.index'
 import { Route as InterviewIdResultRouteImport } from './routes/interview.$id.result'
@@ -37,6 +38,11 @@ const HistoryRoute = HistoryRouteImport.update({
   path: '/history',
   getParentRoute: () => rootRouteImport,
 } as any)
+const PracticeRoute = PracticeRouteImport.update({
+  id: '/practice',
+  path: '/practice',
+  getParentRoute: () => rootRouteImport,
+} as any)
 const InterviewNewRoute = InterviewNewRouteImport.update({
   id: '/interview/new',
   path: '/interview/new',
@@ -58,6 +64,7 @@ export interface FileRoutesByFullPath {
   '/auth': typeof AuthRoute
   '/dashboard': typeof DashboardRoute
   '/history': typeof HistoryRoute
+  '/practice': typeof PracticeRoute
   '/interview/new': typeof InterviewNewRoute
   '/interview/$id/result': typeof InterviewIdResultRoute
   '/interview/$id/': typeof InterviewIdIndexRoute
@@ -67,6 +74,7 @@ export interface FileRoutesByTo {
   '/auth': typeof AuthRoute
   '/dashboard': typeof DashboardRoute
   '/history': typeof HistoryRoute
+  '/practice': typeof PracticeRoute
   '/interview/new': typeof InterviewNewRoute
   '/interview/$id/result': typeof InterviewIdResultRoute
   '/interview/$id': typeof InterviewIdIndexRoute
@@ -77,6 +85,7 @@ export interface FileRoutesById {
   '/auth': typeof AuthRoute
   '/dashboard': typeof DashboardRoute
   '/history': typeof HistoryRoute
+  '/practice': typeof PracticeRoute
   '/interview/new': typeof InterviewNewRoute
   '/interview/$id/result': typeof InterviewIdResultRoute
   '/interview/$id/': typeof InterviewIdIndexRoute
@@ -88,6 +97,7 @@ export interface FileRouteTypes {
     | '/auth'
     | '/dashboard'
     | '/history'
+    | '/practice'
     | '/interview/new'
     | '/interview/$id/result'
     | '/interview/$id/'
@@ -97,6 +107,7 @@ export interface FileRouteTypes {
     | '/auth'
     | '/dashboard'
     | '/history'
+    | '/practice'
     | '/interview/new'
     | '/interview/$id/result'
     | '/interview/$id'
@@ -106,6 +117,7 @@ export interface FileRouteTypes {
     | '/auth'
     | '/dashboard'
     | '/history'
+    | '/practice'
     | '/interview/new'
     | '/interview/$id/result'
     | '/interview/$id/'
@@ -116,6 +128,7 @@ export interface RootRouteChildren {
   AuthRoute: typeof AuthRoute
   DashboardRoute: typeof DashboardRoute
   HistoryRoute: typeof HistoryRoute
+  PracticeRoute: typeof PracticeRoute
   InterviewNewRoute: typeof InterviewNewRoute
   InterviewIdResultRoute: typeof InterviewIdResultRoute
   InterviewIdIndexRoute: typeof InterviewIdIndexRoute
@@ -151,6 +164,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof HistoryRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/practice': {
+      id: '/practice'
+      path: '/practice'
+      fullPath: '/practice'
+      preLoaderRoute: typeof PracticeRouteImport
+      parentRoute: typeof rootRouteImport
+    }
     '/interview/new': {
       id: '/interview/new'
       path: '/interview/new'
@@ -180,6 +200,7 @@ const rootRouteChildren: RootRouteChildren = {
   AuthRoute: AuthRoute,
   DashboardRoute: DashboardRoute,
   HistoryRoute: HistoryRoute,
+  PracticeRoute: PracticeRoute,
   InterviewNewRoute: InterviewNewRoute,
   InterviewIdResultRoute: InterviewIdResultRoute,
   InterviewIdIndexRoute: InterviewIdIndexRoute,
