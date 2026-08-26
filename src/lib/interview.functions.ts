@@ -61,12 +61,27 @@ export const createInterview = createServerFn({ method: "POST" })
         mode: z.enum(["interview", "practice"]).default("interview"),
         topic: z.string().max(80).nullable().optional(),
         avatar_persona: z.string().max(40).default("aria"),
+        avatar_id: z.string().uuid().nullable().optional(),
+        language: z.enum(["en", "hinglish"]).default("en"),
       })
       .parse(data),
   )
   .handler(async ({ data, context }) => {
     const interview = await startInterview(context.supabase, context.userId, data);
     return { id: interview.id };
+  });
+
+/** Feature 1: selectable AI interviewer avatars for the pre-join screen. */
+export const listAvatars = createServerFn({ method: "GET" })
+  .middleware([requireSupabaseAuth])
+  .handler(async ({ context }) => {
+    const { data, error } = await context.supabase
+      .from("avatars")
+      .select("id,name,short_description,thumbnail_url,voice_style,accent_color,sort_order")
+      .eq("is_active", true)
+      .order("sort_order", { ascending: true });
+    if (error) throw new Error(error.message);
+    return data ?? [];
   });
 
 export const getInterview = createServerFn({ method: "GET" })
