@@ -10,10 +10,52 @@ export type Database = {
   // Allows to automatically instantiate createClient with right options
   // instead of createClient<Database, { PostgrestVersion: 'XX' }>(URL, KEY)
   __InternalSupabase: {
-    PostgrestVersion: "14.15"
+    PostgrestVersion: "14.17"
   }
   public: {
     Tables: {
+      avatars: {
+        Row: {
+          accent_color: string
+          created_at: string
+          id: string
+          is_active: boolean
+          name: string
+          personality_prompt: string
+          short_description: string
+          sort_order: number
+          thumbnail_url: string | null
+          updated_at: string
+          voice_style: string
+        }
+        Insert: {
+          accent_color?: string
+          created_at?: string
+          id?: string
+          is_active?: boolean
+          name: string
+          personality_prompt?: string
+          short_description?: string
+          sort_order?: number
+          thumbnail_url?: string | null
+          updated_at?: string
+          voice_style?: string
+        }
+        Update: {
+          accent_color?: string
+          created_at?: string
+          id?: string
+          is_active?: boolean
+          name?: string
+          personality_prompt?: string
+          short_description?: string
+          sort_order?: number
+          thumbnail_url?: string | null
+          updated_at?: string
+          voice_style?: string
+        }
+        Relationships: []
+      }
       interview_messages: {
         Row: {
           created_at: string
@@ -104,6 +146,7 @@ export type Database = {
       }
       interviews: {
         Row: {
+          avatar_id: string | null
           avatar_persona: string
           completed_at: string | null
           difficulty_mode: string
@@ -111,6 +154,7 @@ export type Database = {
           experience_level: string
           id: string
           interview_type: string
+          language: string
           mode: string
           role: string
           started_at: string
@@ -119,6 +163,7 @@ export type Database = {
           user_id: string
         }
         Insert: {
+          avatar_id?: string | null
           avatar_persona?: string
           completed_at?: string | null
           difficulty_mode?: string
@@ -126,6 +171,7 @@ export type Database = {
           experience_level?: string
           id?: string
           interview_type?: string
+          language?: string
           mode?: string
           role?: string
           started_at?: string
@@ -134,6 +180,7 @@ export type Database = {
           user_id: string
         }
         Update: {
+          avatar_id?: string | null
           avatar_persona?: string
           completed_at?: string | null
           difficulty_mode?: string
@@ -141,6 +188,7 @@ export type Database = {
           experience_level?: string
           id?: string
           interview_type?: string
+          language?: string
           mode?: string
           role?: string
           started_at?: string
@@ -148,7 +196,15 @@ export type Database = {
           topic?: string | null
           user_id?: string
         }
-        Relationships: []
+        Relationships: [
+          {
+            foreignKeyName: "interviews_avatar_id_fkey"
+            columns: ["avatar_id"]
+            isOneToOne: false
+            referencedRelation: "avatars"
+            referencedColumns: ["id"]
+          },
+        ]
       }
       profiles: {
         Row: {
