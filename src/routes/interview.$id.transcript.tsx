@@ -48,7 +48,7 @@ function TranscriptPage() {
       <div className="glass space-y-4 rounded-3xl p-6">
         {isLoading && <p className="text-sm text-muted-foreground">Loading transcript…</p>}
         {(data?.messages ?? []).map((m) => {
-          const ai = m.role === "assistant";
+          const ai = m.sender === "ai";
           return (
             <div key={m.id} className="flex gap-3">
               <div
@@ -67,7 +67,7 @@ function TranscriptPage() {
                     second: "2-digit",
                   })}
                 </p>
-                <p className="mt-1 whitespace-pre-wrap text-sm leading-relaxed">{m.content}</p>
+                <p className="mt-1 whitespace-pre-wrap text-sm leading-relaxed">{m.message_text}</p>
               </div>
             </div>
           );
