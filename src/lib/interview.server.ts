@@ -80,8 +80,22 @@ export async function startInterview(db: DB, userId: string, config: Record<stri
     .select("*")
     .single();
   if (error) throw new Error(error.message);
-  const interview = await withPersona(db, data as InterviewRow);
+  return data as InterviewRow;
+}
 
+/**
+ * Generates the opening question. Called when the candidate joins from the
+ * pre-join screen, so the chosen avatar persona + language shape turn one.
+ */
+export async function generateOpening(db: DB, userId: string, interviewId: string) {
+  const existing = await db
+    .from("interview_messages")
+    .select("id")
+    .eq("interview_id", interviewId)
+    .limit(1);
+  if ((existing.data ?? []).length > 0) return { ok: true };
+
+  const interview = await withPersona(db, await requireInterview(db, interviewId));
   const [bank, resume] = await Promise.all([
     loadBank(db, interview.interview_type),
     getResumeText(db, userId),
@@ -96,8 +110,7 @@ export async function startInterview(db: DB, userId: string, config: Record<stri
     question_category: first.nextCategory ?? null,
     difficulty_at_time: first.nextDifficulty ?? null,
   });
-
-  return interview;
+  return { ok: true };
 }
 
 export async function answerTurn(db: DB, userId: string, interviewId: string, text: string) {
