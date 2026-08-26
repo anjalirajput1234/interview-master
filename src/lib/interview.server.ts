@@ -18,7 +18,24 @@ export type InterviewRow = InterviewConfig & {
   started_at: string;
   completed_at: string | null;
   avatar_persona: string | null;
+  avatar_id: string | null;
+  language: string | null;
 };
+
+/**
+ * Feature 1: resolve the selected avatar's personality_prompt and merge it into
+ * the config handed to the AI engine, so tone/style actually changes per persona.
+ */
+export async function withPersona(db: DB, interview: InterviewRow): Promise<InterviewRow> {
+  if (!interview.avatar_id) return interview;
+  const { data } = await db
+    .from("avatars")
+    .select("personality_prompt")
+    .eq("id", interview.avatar_id)
+    .maybeSingle();
+  const prompt = (data?.personality_prompt as string | undefined) ?? null;
+  return prompt ? { ...interview, persona_prompt: prompt } : interview;
+}
 
 
 export async function loadBank(db: DB, interviewType: string): Promise<BankQuestion[]> {
@@ -63,7 +80,7 @@ export async function startInterview(db: DB, userId: string, config: Record<stri
     .select("*")
     .single();
   if (error) throw new Error(error.message);
-  const interview = data as InterviewRow;
+  const interview = await withPersona(db, data as InterviewRow);
 
   const [bank, resume] = await Promise.all([
     loadBank(db, interview.interview_type),
@@ -84,7 +101,7 @@ export async function startInterview(db: DB, userId: string, config: Record<stri
 }
 
 export async function answerTurn(db: DB, userId: string, interviewId: string, text: string) {
-  const interview = await requireInterview(db, interviewId);
+  const interview = await withPersona(db, await requireInterview(db, interviewId));
   if (interview.status !== "in_progress") throw new Error("This interview is already finished.");
 
   const transcript = await loadTranscript(db, interviewId);
