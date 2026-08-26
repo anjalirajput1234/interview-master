@@ -8,6 +8,10 @@ export type InterviewConfig = {
   duration_minutes: number;
   mode: string;
   topic?: string | null;
+  /** Selected avatar's personality prompt (Feature 1) — optional, additive. */
+  persona_prompt?: string | null;
+  /** "en" (default) or "hinglish" (Feature 3). */
+  language?: string | null;
 };
 
 const TOPIC_MAP: Record<string, string> = {
@@ -23,6 +27,15 @@ export function personaPrompt(config: InterviewConfig, resumeText?: string | nul
     : (TOPIC_MAP[config.interview_type] ?? TOPIC_MAP.technical);
 
   const practice = config.mode === "practice";
+  const hinglish = (config.language ?? "en") === "hinglish";
+
+  const personaLine = config.persona_prompt
+    ? `\n\nINTERVIEWER PERSONA (stay in character for every message):\n${config.persona_prompt.slice(0, 1200)}`
+    : "";
+
+  const languageLine = hinglish
+    ? `\n\nLANGUAGE: Speak in natural Hinglish — conversational Hindi written in Roman script, mixed with English technical terms exactly the way Indian engineers talk (e.g. "Acha, ab batao — React mein state update async kyun hota hai?"). Never use Devanagari script. Keep technical keywords in English.`
+    : `\n\nLANGUAGE: Professional English.`;
 
   return `You are "InterviewAI", a senior engineering interviewer conducting a ${config.interview_type} interview for the role of ${config.role}.
 
@@ -46,6 +59,8 @@ DIFFICULTY: ${
       ? "adaptive — escalate difficulty after strong answers, hold or step down after weak/vague answers."
       : `fixed at ${config.difficulty_mode} difficulty.`
   }
+
+${personaLine}${languageLine}
 
 ${resumeText ? `CANDIDATE RESUME (use it to reference real projects and stated tech):\n"""${resumeText.slice(0, 4000)}"""` : ""}`;
 }
