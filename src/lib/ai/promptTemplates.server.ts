@@ -24,7 +24,7 @@ const TOPIC_MAP: Record<string, string> = {
 export function personaPrompt(config: InterviewConfig, resumeText?: string | null) {
   const topics = config.topic
     ? config.topic
-    : (TOPIC_MAP[config.interview_type] ?? TOPIC_MAP.technical);
+    : (TOPIC_MAP[config.interview_type] ?? TOPIC_MAP["technical"]);
 
   const practice = config.mode === "practice";
   const hinglish = (config.language ?? "en") === "hinglish";

@@ -32,7 +32,7 @@ const STYLES: Record<string, VoiceProfile> = {
 const HINDI_HINTS = ["hindi", "hi-in", "lekha", "google हिन्दी", "kalpana", "swara", "madhur"];
 
 export function voiceProfile(style?: string | null, language?: string | null): VoiceProfile {
-  const base = STYLES[style ?? "neutral"] ?? STYLES.neutral!;
+  const base = STYLES[style ?? "neutral"] ?? STYLES["neutral"]!;
   if ((language ?? "en") !== "hinglish") return base;
   // Hindi voice first; the English hints stay as a graceful fallback.
   return { ...base, hints: [...HINDI_HINTS, ...base.hints] };

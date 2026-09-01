@@ -45,7 +45,7 @@ export function AppShell({
 }: {
   children: ReactNode;
   title?: string;
-  subtitle?: string;
+  subtitle?: string | undefined;
   wide?: boolean;
 }) {
   const { loading, user } = useRequireAuth();
