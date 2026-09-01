@@ -40,9 +40,13 @@ export const updateProfile = createServerFn({ method: "POST" })
       .parse(data),
   )
   .handler(async ({ data, context }) => {
+    // exactOptionalPropertyTypes: strip undefined keys before the update.
+    const updates = Object.fromEntries(
+      Object.entries(data).filter(([, v]) => v !== undefined),
+    );
     const { error } = await context.supabase
       .from("profiles")
-      .update(data)
+      .update(updates)
       .eq("id", context.userId);
     if (error) throw new Error(error.message);
     return { ok: true };

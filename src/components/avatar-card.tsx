@@ -46,7 +46,7 @@ export function AvatarCard({
       <div
         className={cn(
           "flex aspect-[4/3] items-center justify-center overflow-hidden rounded-xl bg-gradient-to-br",
-          ACCENTS[avatar.accent_color] ?? ACCENTS.primary,
+          ACCENTS[avatar.accent_color] ?? ACCENTS["primary"],
         )}
       >
         {avatar.thumbnail_url ? (
