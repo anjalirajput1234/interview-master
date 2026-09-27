@@ -65,8 +65,20 @@ function extractJSON<T>(raw: string): T {
   }
 }
 
-/** Calls the provider and parses a JSON object response. Retries once on transient failure. */
-export async function chatJSON<T>(messages: ChatMessage[]): Promise<T> {
+/**
+ * Calls the active provider and parses a JSON object response.
+ * AI_PROVIDER=nebius routes to NVIDIA Nemotron on Nebius; on any Nebius failure
+ * it logs and falls back to the Lovable AI Gateway so the interview never breaks.
+ */
+export async function chatJSON<T>(messages: ChatMessage[], tier: "fast" | "deep" = "fast"): Promise<T> {
+  const { isNebiusEnabled, nebiusChat } = await import("./nebiusProvider.server");
+  if (isNebiusEnabled()) {
+    try {
+      return extractJSON<T>(await nebiusChat(messages, tier));
+    } catch (error) {
+      console.error("[nebius] falling back to Lovable AI Gateway:", error);
+    }
+  }
   try {
     return extractJSON<T>(await callGateway(messages));
   } catch (error) {

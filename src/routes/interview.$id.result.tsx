@@ -7,7 +7,7 @@ import { AppShell } from "@/components/app-shell";
 import { ScoreRing } from "@/components/score-ring";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
-import { getResult } from "@/lib/interview.functions";
+import { getAiProviderInfo, getResult } from "@/lib/interview.functions";
 
 export const Route = createFileRoute("/interview/$id/result")({
   head: () => ({
@@ -31,6 +31,12 @@ function ResultPage() {
     queryKey: ["result", id],
     queryFn: () => fn({ data: { id } }),
     refetchInterval: (q) => (q.state.data?.result ? false : 4000),
+  });
+  const providerFn = useServerFn(getAiProviderInfo);
+  const { data: providerInfo } = useQuery({
+    queryKey: ["ai-provider"],
+    queryFn: () => providerFn(),
+    staleTime: Infinity,
   });
 
   const result = data?.result as
@@ -63,6 +69,11 @@ function ResultPage() {
             <ScoreRing score={Number(result.overall_score) || 0} />
             <div>
               <h2 className="font-display text-xl font-semibold">Overall performance</h2>
+              {providerInfo?.provider === "nebius" && (
+                <Badge variant="outline" className="mt-2 border-primary/40 text-xs text-muted-foreground">
+                  Powered by NVIDIA Nemotron on Nebius Token Factory
+                </Badge>
+              )}
               <p className="mt-3 text-sm leading-relaxed text-muted-foreground">
                 {result.ai_feedback_summary || "No summary available for this session."}
               </p>

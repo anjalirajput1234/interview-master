@@ -88,7 +88,7 @@ export async function generateFinalReport(
   const report = await chatJSON<FinalReport>([
     { role: "system", content: personaPrompt(config) },
     { role: "user", content: `TRANSCRIPT:\n\n${dialogue}\n\n${FINAL_EVALUATION_INSTRUCTION}` },
-  ]);
+  ], "deep");
 
   return {
     overallScore: clamp(report.overallScore),

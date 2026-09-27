@@ -193,3 +193,10 @@ export const deleteQuestion = createServerFn({ method: "POST" })
     if (error) throw new Error(error.message);
     return { ok: true };
   });
+
+/** Which AI engine is active — used for the "Powered by" badge on the report. */
+export const getAiProviderInfo = createServerFn({ method: "GET" }).handler(async () => {
+  const nebius =
+    (process.env["AI_PROVIDER"] ?? "").toLowerCase() === "nebius" && !!process.env["NEBIUS_API_KEY"];
+  return { provider: nebius ? "nebius" : "lovable" };
+});
